@@ -19,7 +19,6 @@
 			display: inline-block;
 			width: 30px;
 			height: 30px;
-			margin: 1px;
 			background-color: grey;
 		}
 
@@ -57,7 +56,34 @@
 			}
 		}
 
+		function groupNumber() {
+			for (var i = 0; i < row; i++) {
+				var box = document.getElementsByClassName("row")[i].childNodes;
+				for (var j = 0; j < col; j++) {
+					checkBoxForGroupingNumber(box,i,j);
+				}
+			}
+		}
+
+		function checkBoxForGroupingNumber(box,i,j) {
+
+			box[j].style.border = "0.5px solid #0000FF";
+			if(i % 3 == 0 ) {
+				box[j].style.borderTop = "thick solid #0000FF";
+			}
+			if(j % 3 ==0) {
+				box[j].style.borderLeft = "thick solid #0000FF";
+			}
+			if(i == 8 ) {
+				box[j].style.borderBottom = "thick solid #0000FF";
+			}
+			if(j == 8) {
+				box[j].style.borderRight = "thick solid #0000FF";
+			}
+		}
+
 		createBoard();
+		groupNumber();
 	</script>
 </body>
 </html>
