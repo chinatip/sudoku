@@ -1,4 +1,5 @@
 {
+  "name": "sudoku",
   "scripts": {
     "dev": "next"
   },
