@@ -1,6 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
+import { withStateHandlers } from 'recompose'
 import _ from 'lodash'
+
+import Cell from './Cell'
 
 const size = 9
 
@@ -9,13 +12,10 @@ const Row = styled.div`
 `
 
 const cellSize = 50
-const Cell = styled.div`
+const CellWrapper = styled.div`
   width: ${cellSize}px;
   height: ${cellSize}px;
   border: 1px solid black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   ${props => props.bDivider && 'border-bottom: 5px solid black'};
   ${props => props.rDivider && 'border-right: 5px solid black'};
 `
@@ -87,6 +87,7 @@ const getRandomHint = (fSudoku) => {
     }
   }
   
+  return fSudoku
 }
 
 const formatSudoku = (sudoku) => {
@@ -102,18 +103,44 @@ const formatSudoku = (sudoku) => {
   return fSudoku
 }
 
-const Board = ({ sudoku }) => {
-  const fSudoku = formatSudoku(sudoku)
-  getRandomHint(fSudoku)
-
+const Board = ({ sudoku, updateStatus }) => {
+  const solution = formatSudoku(sudoku)
+  const fSudoku = getRandomHint(_.clone(solution))
+  
   return _.map(fSudoku, (row, i) => {
-    return <Row key={i}>{row.map((e, j) => 
-      <Cell 
-        key={j}
-        bDivider={(parseInt(i)+1) % 3 === 0 && (parseInt(i) !== 8)}
-        rDivider={(parseInt(j)+1) % 3 === 0 && (parseInt(j) !== 8)}
-      >{e}</Cell>)}</Row>
+    return <Row key={i}>{
+      row.map((c, j) => {
+        updateStatus({ row: i, col: j, status: true })
+
+        return (
+          <CellWrapper 
+            key={j}
+            bDivider={(parseInt(i)+1) % 3 === 0 && (parseInt(i) !== 8)}
+            rDivider={(parseInt(j)+1) % 3 === 0 && (parseInt(j) !== 8)}
+          >
+            <Cell 
+              blank={c === 0} 
+              value={formatSudoku(sudoku)[i][j]} 
+              status={c !== 0} 
+              row={i} 
+              col={j}
+              updateStatus={updateStatus}
+            />
+          </CellWrapper>
+        )})
+      }
+    </Row>
   })
 }
 
-export default Board
+export default withStateHandlers(
+  () => ({ status: [[],[],[],[],[],[],[],[],[]] }),
+  {
+    updateStatus: ({ status }) => ({ row, col, status: uStatus }) => {
+      const newStatus = status
+      newStatus[row][col] = uStatus
+      
+      return { status: newStatus }
+    }
+  }
+)(Board)
