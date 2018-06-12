@@ -1,8 +1,9 @@
 import React from 'react'
 import styled, { injectGlobal, css } from 'styled-components'
 import { media, mediaExceed } from '../utils/media-style'
+import Game from '../components/Game'
 
-const GlobalStyles = ({theme}) => {
+const GlobalStyles = ({ theme }) => {
   injectGlobal `
     body, html {
       padding: 0;
@@ -27,6 +28,7 @@ class Index extends React.Component {
     return (
       <div>
         Hello Sudoku
+        <Game />
       </div>
     )
   }
