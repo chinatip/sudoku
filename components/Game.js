@@ -1,13 +1,21 @@
 import React from 'react'
 import $ from 'jquery'
+import { withStateHandlers } from 'recompose'
+
 import Generator from './Generator'
 import Board from './Board'
 
-const size = 9
-const Game = () => {
+const Game = ({ isEnd, updateIsEnd }) => {
   const sudoku = new Generator()
-  console.log(sudoku)
-  return <Board sudoku={sudoku} size={size} />
+
+  return isEnd ? <div>finish</div>: <Board sudoku={sudoku} updateIsEnd={updateIsEnd} />
 }
 
-export default Game
+export default withStateHandlers(
+  ({}) => ({ isEnd: false }),
+  {
+    updateIsEnd: ({ isEnd }) => (status) => {
+      return { isEnd: status }
+    }
+  }
+)(Game)

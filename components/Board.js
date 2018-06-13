@@ -1,17 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
-import { withStateHandlers } from 'recompose'
 import _ from 'lodash'
 
 import Cell from './Cell'
 
 const size = 9
+const cellSize = 50
 
 const Row = styled.div`
   display: flex;
 `
-
-const cellSize = 50
 const CellWrapper = styled.div`
   width: ${cellSize}px;
   height: ${cellSize}px;
@@ -20,13 +18,13 @@ const CellWrapper = styled.div`
   ${props => props.rDivider && 'border-right: 5px solid black'};
 `
 
-const checkEndGame = (status) => {
+const isGameEnd = (status) => {
   return status.filter((row, i) => {
     return row.filter((c) => c === false).length > 0
   }).length < 1
 }
 
-const fixHint = (list, total) => {
+const fixHintList = (list, total) => {
   var i = 0
   while(total !== 0) {
     if (total < 0) {
@@ -59,7 +57,7 @@ const randomNumHintPerBlock = () => {
     totalHint -= numHint
   }
 
-  return fixHint(hintList, totalHint)
+  return fixHintList(hintList, totalHint)
 }
 
 const randomCellinBlock = (row, col) => {
@@ -73,8 +71,6 @@ const getRandomHint = (fSudoku) => {
   let hintList = randomNumHintPerBlock()
   
   if (hintList) {
-    // console.log(hintList)
-    
     var block = 0
     while(block < 9) {
       const row = Math.floor(block / 3)
@@ -82,7 +78,6 @@ const getRandomHint = (fSudoku) => {
 
       const { r, c } = randomCellinBlock(row, col)
       if (fSudoku[r][c] !== 0) {
-        // console.log('in:', fSudoku[r][c], 'r,c',r,c, 'block', block, hintList[block])
         fSudoku[r][c] = 0
         hintList[block]++
       }
@@ -117,7 +112,6 @@ class Board extends React.Component {
     this.state = this.initState(sudoku)
   }
 
-
   initState = (sudoku) => {
     const status = []
     const fSudoku = getRandomHint(formatSudoku(sudoku)) 
@@ -127,7 +121,7 @@ class Board extends React.Component {
         status[i][j] = fSudoku[i][j] !== 0
       }
     }
-    console.log('init b', status)
+
     return { 
       status, 
       done: false, 
@@ -158,8 +152,10 @@ class Board extends React.Component {
   updateStatus = (row, col) => (status) => {
     const newStatus = this.state.status
     newStatus[row][col] = status
-    
-    this.setState({ status: newStatus, done: checkEndGame(newStatus) })
+    const isEnd = isGameEnd(newStatus)
+
+    this.props.updateIsEnd(isEnd)
+    this.setState({ status: newStatus, done: isEnd })
   }
 
   updateSelect = (row, col, value) => () => {
@@ -204,12 +200,12 @@ class Board extends React.Component {
     const solution = formatSudoku(sudoku)
     const fSudoku = getRandomHint(_.clone(solution))
 
-    return <div> 
-      {!done? <div style={{ display: 'flex'}}>
+    return (
+      <div style={{ display: 'flex'}}> 
         <div style={{ marginRight: '30px'}}>{this.renderBoard(true)}</div>
         <div>{this.renderBoard()}</div>
-      </div>: 'Finishhhhhhhhhhh'}
       </div>
+    )
   }
 }
 
