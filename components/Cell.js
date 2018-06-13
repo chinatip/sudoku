@@ -8,20 +8,28 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  ${props => props.isSameRolCol && 'background: grey'};
-  ${props => props.isSameNum && 'background: blue'};
+  background: rgba(255, 255, 255, 0.21);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 2px;
+  ${props => props.isSameRolCol && 'background: rgba(255, 255, 255, 0.43)'};
+  ${props => props.isSameNum && 'background: rgba(106, 106, 173, 0.33)'};
 `
 
 const Label = styled.div`
   font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
 `
 
 const Input = styled.input`
   width: 96%;
   height: 96%;
+  font-size: 16px;
   text-align: center;
   border: none;
   background: none;
+  font-family: 'Open Sans', sans-serif;
+  color: white;
   ${props => props.incorrect && 'color: red'};
 `
 

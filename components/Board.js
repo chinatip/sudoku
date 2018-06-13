@@ -18,9 +18,10 @@ const Row = styled.div`
 const CellWrapper = styled.div`
   width: ${cellSize}px;
   height: ${cellSize}px;
-  border: 1px solid black;
-  ${props => props.bDivider && 'border-bottom: 5px solid black'};
-  ${props => props.rDivider && 'border-right: 5px solid black'};
+  padding: 1px;
+  margin: 2px;
+  ${props => props.bDivider && 'margin-bottom: 7px'};
+  ${props => props.rDivider && 'margin-right: 7px'};
 `
 
 const isGameEnd = (status) => {

@@ -7,8 +7,29 @@ import Generator from './Generator'
 import Board from './Board'
 
 const Container = styled.div`
-  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(-39deg,#349cfc -13%,#15bcee 22%,#00e0dc 56%,#00eecb 80%);
+`
+const InnerContainer = styled.div`
+  padding: 20px;
+  text-align: center;
+  background: rgba(150, 149, 149, 0.2);
+  border-radius: 5px;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 8px rgba(101, 101, 101, 0.28);
+`
+const Title = styled.div`
+  font-family: 'Michroma', sans-serif;
+  font-size: 46px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: white;
+  text-shadow: 3px 2px rgba(128, 128, 128, 0.3);
+  letter-spacing: 1px;
 `
 const ScoreBoard = styled.div`
 
@@ -28,10 +49,13 @@ const Game = ({ isEnd, time, f, updateIsEnd }) => {
 
   return (
     <Container>
-      <Board sudoku={sudoku} updateIsEnd={updateIsEnd} />
-      <ScoreBoard>
-        {time}
-      </ScoreBoard>
+      <InnerContainer>
+        <Title>Sudoku Game</Title>
+        <Board sudoku={sudoku} updateIsEnd={updateIsEnd} />
+        <ScoreBoard>
+          {time}
+        </ScoreBoard>
+      </InnerContainer>
     </Container>
   )     
 }
