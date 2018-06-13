@@ -141,6 +141,24 @@ class Board extends React.Component {
     }
   }
 
+  checkCell = (r, c) => {
+    const { solution, current, status } = this.state
+    let isSameRolCol = false
+    let isSameNum = false
+
+    if (current) {
+      const { row, col, value } = current
+      isSameRolCol = row === r || col === c
+      isSameNum = (value === solution[r][c]) && status[r][c] && status[row][col]
+    }
+
+    return { isSameRolCol, isSameNum }
+  }
+
+  isDivider = (num) => {
+    return (num + 1) % 3 === 0 && (num !== 8)
+  }
+
   updateStatus = (row, col) => (status) => {
     const newStatus = this.state.status
     newStatus[row][col] = status
@@ -161,18 +179,19 @@ class Board extends React.Component {
         row.map((val, j) => {  
           const r = parseInt(i)
           const c = parseInt(j)
+          const { isSameRolCol, isSameNum } = this.checkCell(r, c)
 
           return (
             <CellWrapper 
               key={j}
-              bDivider={(r+1) % 3 === 0 && (r !== 8)}
-              rDivider={(c+1) % 3 === 0 && (c !== 8)}
+              bDivider={this.isDivider(r)}
+              rDivider={this.isDivider(c)}
             >
               <Cell 
                 blank={val === 0 && !sol} 
                 value={solution[i][j]} 
-                isSameRolCol={current? current.row === r || current.col === c: false}
-                isSameNum={current? current.value === solution[i][j] && status[i][j] && status[current.row][current.col]: false}
+                isSameRolCol={isSameRolCol}
+                isSameNum={isSameNum}
                 updateSelect={this.updateSelect(r, c, solution[r][c])}
                 updateStatus={sol? null: this.updateStatus(r, c)}
               />
@@ -187,7 +206,7 @@ class Board extends React.Component {
     const { sudoku } = this.props
     const solution = formatSudoku(sudoku)
     const fSudoku = getRandomHint(_.clone(solution))
-  
+
     return <div style={{ display: 'flex'}}> 
         <div>{this.renderBoard()}</div>
         <div style={{ marginLeft: '30px'}}>{this.renderBoard(true)}</div>

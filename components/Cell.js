@@ -40,7 +40,7 @@ export default withStateHandlers(
   {
     updateInput: ({ input }, { value, updateStatus }) => (e) => {
       if (updateStatus) {
-        updateStatus(parseInt(value) === parseInt(e.target.value))
+        updateStatus(value === parseInt(e.target.value))
       }
 
       return { input : e.target.value}
