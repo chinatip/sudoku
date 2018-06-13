@@ -8,6 +8,8 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  ${props => props.isSameRolCol && 'background: grey'};
+  ${props => props.isSameNum && 'background: blue'};
 `
 
 const Label = styled.div`
@@ -23,9 +25,9 @@ const Input = styled.input`
   ${props => props.incorrect && 'color: red'};
 `
 
-const Cell = ({ value, input, blank, status, updateInput }) => {
+const Cell = ({ value, input, blank, isSameRolCol, isSameNum, updateInput, updateSelect }) => {
   return (
-    <Container>
+    <Container onClick={updateSelect} isSameRolCol={isSameRolCol} isSameNum={isSameNum}>
       { blank? <Input onChange={updateInput} incorrect={input !== '' && parseInt(value) !== parseInt(input)}/>: 
           <Label>{value}</Label> 
       }
@@ -36,8 +38,10 @@ const Cell = ({ value, input, blank, status, updateInput }) => {
 export default withStateHandlers(
   () => ({ input: '' }),
   {
-    updateInput: ({ input }, { value, updateStatus, row, col }) => (e) => {
-      updateStatus({ row, col, status: parseInt(value) === parseInt(e.target.value)})
+    updateInput: ({ input }, { value, updateStatus }) => (e) => {
+      if (updateStatus) {
+        updateStatus(parseInt(value) === parseInt(e.target.value))
+      }
 
       return { input : e.target.value}
     },

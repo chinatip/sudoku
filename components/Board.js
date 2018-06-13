@@ -113,52 +113,86 @@ const formatSudoku = (sudoku) => {
   return fSudoku
 }
 
-const renderBoard = ({ sudoku, solution, fSudoku, updateStatus, sol }) => {
-  return _.map(fSudoku, (row, i) => {
-    return <Row key={i}>{
-      row.map((c, j) => {
-        updateStatus({ row: i, col: j, status: c === 0? false: true })
+class Board extends React.Component {
+  constructor(props) {
+    super()
 
-        return (
-          <CellWrapper 
-            key={j}
-            bDivider={(parseInt(i)+1) % 3 === 0 && (parseInt(i) !== 8)}
-            rDivider={(parseInt(j)+1) % 3 === 0 && (parseInt(j) !== 8)}
-          >
-            <Cell 
-              blank={c === 0 && !sol} 
-              value={solution[i][j]} 
-              status={c !== 0} 
-              row={i} 
-              col={j}
-              updateStatus={updateStatus}
-            />
-          </CellWrapper>
-        )})
+    const { sudoku } = props
+    this.state = this.initState(sudoku)
+  }
+
+
+  initState = (sudoku) => {
+    const status = []
+    const fSudoku = getRandomHint(formatSudoku(sudoku)) 
+    for(var i = 0; i < 9; i++) {
+      status[i] = []
+      for(var j = 0; j < 9; j++) {
+        status[i][j] = fSudoku[i][j] !== 0
       }
-    </Row>
-  })
-}
+    }
 
-const Board = ({ sudoku, updateStatus }) => {
-  const solution = formatSudoku(sudoku)
-  const fSudoku = getRandomHint(_.clone(solution))
-
-  return <div style={{ display: 'flex'}}> <div>{renderBoard({ solution: formatSudoku(sudoku), fSudoku, updateStatus })}</div>
-    <div style={{ marginLeft: '30px'}}>{renderBoard({ solution: formatSudoku(sudoku), fSudoku, updateStatus, sol: true })}</div></div>
-}
-
-export default withStateHandlers(
-  () => ({ 
-    done: false,
-    status: [[],[],[],[],[],[],[],[],[]]
-   }),
-  {
-    updateStatus: ({ status }) => ({ row, col, status: uStatus }) => {
-      const newStatus = status
-      newStatus[row][col] = uStatus
-
-      return { status: newStatus, done: checkEndGame(newStatus) }
+    return { 
+      status, 
+      done: false, 
+      current: null, 
+      solution: formatSudoku(sudoku),
+      fSudoku
     }
   }
-)(Board)
+
+  updateStatus = (row, col) => (status) => {
+    const newStatus = this.state.status
+    newStatus[row][col] = status
+    
+    this.setState({ status: newStatus, done: checkEndGame(newStatus) })
+  }
+
+  updateSelect = (row, col, value) => () => {
+    this.setState({ current: { row, col, value }})
+  }
+
+  renderBoard = (sol = false) => {
+    const { sudoku } = this.props
+    const { solution, fSudoku, status, current } = this.state
+
+    return _.map(fSudoku, (row, i) => {
+      return <Row key={i}>{
+        row.map((val, j) => {  
+          const r = parseInt(i)
+          const c = parseInt(j)
+
+          return (
+            <CellWrapper 
+              key={j}
+              bDivider={(r+1) % 3 === 0 && (r !== 8)}
+              rDivider={(c+1) % 3 === 0 && (c !== 8)}
+            >
+              <Cell 
+                blank={val === 0 && !sol} 
+                value={solution[i][j]} 
+                isSameRolCol={current? current.row === r || current.col === c: false}
+                isSameNum={current? current.value === solution[i][j] && status[i][j] && status[current.row][current.col]: false}
+                updateSelect={this.updateSelect(r, c, solution[r][c])}
+                updateStatus={sol? null: this.updateStatus(r, c)}
+              />
+            </CellWrapper>
+          )})
+        }
+      </Row>
+    })
+  }
+
+  render() {
+    const { sudoku } = this.props
+    const solution = formatSudoku(sudoku)
+    const fSudoku = getRandomHint(_.clone(solution))
+  
+    return <div style={{ display: 'flex'}}> 
+        <div>{this.renderBoard()}</div>
+        <div style={{ marginLeft: '30px'}}>{this.renderBoard(true)}</div>
+      </div>
+  }
+}
+
+export default Board
