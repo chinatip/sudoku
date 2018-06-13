@@ -7,6 +7,11 @@ import Cell from './Cell'
 const size = 9
 const cellSize = 50
 
+const BoardContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 const Row = styled.div`
   display: flex;
 `
@@ -195,16 +200,16 @@ class Board extends React.Component {
   }
 
   render() {
-    const { sudoku } = this.props
+    const { sudoku, showSol } = this.props
     const { done } = this.state
     const solution = formatSudoku(sudoku)
     const fSudoku = getRandomHint(_.clone(solution))
 
     return (
-      <div style={{ display: 'flex'}}> 
-        <div style={{ marginRight: '30px'}}>{this.renderBoard(true)}</div>
+      <BoardContainer>
+        { showSol && <div style={{ marginRight: '30px'}}>{this.renderBoard(true)}</div>}
         <div>{this.renderBoard()}</div>
-      </div>
+      </BoardContainer>
     )
   }
 }

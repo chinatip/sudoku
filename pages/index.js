@@ -3,6 +3,9 @@ import styled, { injectGlobal, css } from 'styled-components'
 import { media, mediaExceed } from '../utils/media-style'
 import Game from '../components/Game'
 
+const Container = styled.div`
+  
+`
 const GlobalStyles = ({ theme }) => {
   injectGlobal `
     body, html {
@@ -26,10 +29,11 @@ const GlobalStyles = ({ theme }) => {
 class Index extends React.Component {  
   render() {     
     return (
-      <div>
+      <Container>
         Hello Sudoku
         <Game />
-      </div>
+        <GlobalStyles />
+      </Container>
     )
   }
 } 
