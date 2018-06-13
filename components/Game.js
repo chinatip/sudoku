@@ -31,8 +31,11 @@ const Title = styled.div`
   text-shadow: 3px 2px rgba(128, 128, 128, 0.3);
   letter-spacing: 1px;
 `
-const ScoreBoard = styled.div`
-
+const Time = styled.div`
+  margin-top: 40px;
+  font-family: 'Michroma', sans-serif;
+  color: white;
+  font-size: 20px;
 `
 
 const ScoreBoardCover = styled.div`
@@ -52,9 +55,9 @@ const Game = ({ isEnd, time, f, updateIsEnd }) => {
       <InnerContainer>
         <Title>Sudoku Game</Title>
         <Board sudoku={sudoku} updateIsEnd={updateIsEnd} />
-        <ScoreBoard>
-          {time}
-        </ScoreBoard>
+        <Time>
+          {`${time}s ${isEnd? '(Done)': ''}`}
+        </Time>
       </InnerContainer>
     </Container>
   )     
@@ -74,11 +77,13 @@ export default compose(
   ),
   lifecycle({
     componentDidMount() {
-      const { time, updateTime } = this.props
+      const { time, isEnd, updateTime } = this.props
       
       updateTime(0)
       this.interval = setInterval(() => {
-        updateTime(time + 1)
+        if (!isEnd) {
+          updateTime(time + 1)
+        }
       }, 1000)
     },
     componentWillUnmount() {
