@@ -21,12 +21,8 @@ const CellWrapper = styled.div`
 `
 
 const checkEndGame = (status) => {
-// console.log(status.filter((row) => {
-//   return row.filter((c) => c === false).length > 1
-// }).length < 1, status)
-
-  return status.filter((row) => {
-    return row.filter((c) => c === false).length > 1
+  return status.filter((row, i) => {
+    return row.filter((c) => c === false).length > 0
   }).length < 1
 }
 
@@ -76,7 +72,7 @@ const randomCellinBlock = (row, col) => {
 const getRandomHint = (fSudoku) => { 
   let hintList = randomNumHintPerBlock()
   
-  if(hintList){
+  if (hintList) {
     // console.log(hintList)
     
     var block = 0
@@ -131,7 +127,7 @@ class Board extends React.Component {
         status[i][j] = fSudoku[i][j] !== 0
       }
     }
-
+    console.log('init b', status)
     return { 
       status, 
       done: false, 
@@ -204,12 +200,15 @@ class Board extends React.Component {
 
   render() {
     const { sudoku } = this.props
+    const { done } = this.state
     const solution = formatSudoku(sudoku)
     const fSudoku = getRandomHint(_.clone(solution))
 
-    return <div style={{ display: 'flex'}}> 
+    return <div> 
+      {!done? <div style={{ display: 'flex'}}>
+        <div style={{ marginRight: '30px'}}>{this.renderBoard(true)}</div>
         <div>{this.renderBoard()}</div>
-        <div style={{ marginLeft: '30px'}}>{this.renderBoard(true)}</div>
+      </div>: 'Finishhhhhhhhhhh'}
       </div>
   }
 }
