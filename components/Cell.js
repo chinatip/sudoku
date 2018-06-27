@@ -11,8 +11,8 @@ const Container = styled.div`
   background: rgba(255, 255, 255, 0.21);
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 2px;
-  ${props => props.isSameRolCol && 'background: rgba(255, 255, 255, 0.43)'};
-  ${props => props.isSameNum && 'background: rgba(106, 106, 173, 0.33)'};
+  ${props => props.isSameRolCol && 'background: rgba(66, 69, 70, 0.19)'};
+  ${props => props.isSameNum && 'background: rgba(19, 19, 86, 0.57)'};
 `
 
 const Label = styled.div`

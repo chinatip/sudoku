@@ -120,7 +120,9 @@ class Board extends React.Component {
 
   initState = (sudoku) => {
     const status = []
+    const solution = formatSudoku(sudoku)
     const fSudoku = getRandomHint(formatSudoku(sudoku)) 
+
     for(var i = 0; i < 9; i++) {
       status[i] = []
       for(var j = 0; j < 9; j++) {
@@ -132,7 +134,7 @@ class Board extends React.Component {
       status, 
       done: false, 
       current: null, 
-      solution: formatSudoku(sudoku),
+      solution,
       fSudoku
     }
   }
@@ -203,13 +205,15 @@ class Board extends React.Component {
   render() {
     const { sudoku, showSol } = this.props
     const { done } = this.state
-    const solution = formatSudoku(sudoku)
-    const fSudoku = getRandomHint(_.clone(solution))
 
     return (
       <BoardContainer>
-        { showSol && <div style={{ marginRight: '30px'}}>{this.renderBoard(true)}</div>}
-        <div>{this.renderBoard()}</div>
+        { showSol && 
+          <div style={{ marginRight: '30px' }}>
+            { this.renderBoard(true) }
+          </div>
+        }
+        <div>{ this.renderBoard() }</div>
       </BoardContainer>
     )
   }

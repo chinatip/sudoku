@@ -17,10 +17,10 @@ const Container = styled.div`
 const InnerContainer = styled.div`
   padding: 20px;
   text-align: center;
-  background: rgba(150, 149, 149, 0.2);
+  background: rgba(150, 149, 149, 0.1);
   border-radius: 5px;
   border: 1px solid transparent;
-  box-shadow: 0 4px 8px rgba(101, 101, 101, 0.28);
+  box-shadow: 2px 4px 8px rgba(101, 101, 101, 0.28);
 `
 const Title = styled.div`
   font-family: 'Michroma', sans-serif;
@@ -47,16 +47,25 @@ const ScoreBoardCover = styled.div`
   align-items: center;
 `
 
-const Game = ({ isEnd, time, f, updateIsEnd }) => {
-  const sudoku = new Generator()
+const formatTime = (time) => {
+  const h = Math.floor(time / 3600)
+  const m = Math.floor((time - (h * 3600)) / 60)
+  const s = time - (m * 60) - (h * 3600)
 
+  return (h > 0? `${h < 10? '0' + h: h}:`: '') + `${m < 10? '0' + m: m}:${s < 10? '0' + s: s}`
+}
+
+const Game = ({ isEnd, time, f, showSol, updateIsEnd, updateShowSol }) => {
+  const sudoku = new Generator()
+  
   return (
     <Container>
       <InnerContainer>
         <Title>Sudoku Game</Title>
-        <Board sudoku={sudoku} updateIsEnd={updateIsEnd} />
+        <button onClick={updateShowSol}>{!showSol? 'Show solution': 'Hide Solution'}</button>
+        <Board sudoku={sudoku} updateIsEnd={updateIsEnd} showSol={showSol} />
         <Time>
-          {`${time}s ${isEnd? '(Done)': ''}`}
+          { !isEnd ? formatTime(time): `Done: ${formatTime(time)}`}
         </Time>
       </InnerContainer>
     </Container>
@@ -65,13 +74,19 @@ const Game = ({ isEnd, time, f, updateIsEnd }) => {
 
 export default compose(
   withStateHandlers(
-    ({}) => ({ isEnd: false, time: 0 }),
+    ({}) => ({ isEnd: false, time: 0, showSol: false }),
     {
       updateIsEnd: ({ isEnd }) => (status) => {
         return { isEnd: status }
       },
-      updateTime: ({ time }) => () => {
+      updateTime: ({ time, isEnd }) => () => {
+        if (isEnd) {
+          return { time }
+        }
         return { time: time + 1 }
+      },
+      updateShowSol: ({ showSol }) => () => { 
+        return { showSol: !showSol }
       }
     }
   ),
@@ -81,9 +96,7 @@ export default compose(
       
       updateTime(0)
       this.interval = setInterval(() => {
-        if (!isEnd) {
-          updateTime(time + 1)
-        }
+        updateTime(time + 1)
       }, 1000)
     },
     componentWillUnmount() {
