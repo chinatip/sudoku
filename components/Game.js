@@ -3,7 +3,7 @@ import $ from 'jquery'
 import styled from 'styled-components'
 import { lifecycle, withStateHandlers, compose } from 'recompose'
 
-import Generator from './Generator'
+import { generate } from './Generator'
 import Board from './Board'
 
 const Container = styled.div`
@@ -55,14 +55,13 @@ const formatTime = (time) => {
   return (h > 0? `${h < 10? '0' + h: h}:`: '') + `${m < 10? '0' + m: m}:${s < 10? '0' + s: s}`
 }
 
-const Game = ({ isEnd, time, f, showSol, updateIsEnd, updateShowSol }) => {
-  const sudoku = new Generator()
-  
+const Game = ({ sudoku, isEnd, time, f, showSol, updateIsEnd, updateShowSol, reset }) => {
   return (
     <Container>
       <InnerContainer>
         <Title>Sudoku Game</Title>
         <button onClick={updateShowSol}>{!showSol? 'Show solution': 'Hide Solution'}</button>
+        <button onClick={reset}>reset</button>
         <Board sudoku={sudoku} updateIsEnd={updateIsEnd} showSol={showSol} />
         <Time>
           { !isEnd ? formatTime(time): `Done: ${formatTime(time)}`}
@@ -74,7 +73,12 @@ const Game = ({ isEnd, time, f, showSol, updateIsEnd, updateShowSol }) => {
 
 export default compose(
   withStateHandlers(
-    ({}) => ({ isEnd: false, time: 0, showSol: false }),
+    ({}) => ({ 
+      isEnd: false, 
+      time: 0, 
+      showSol: false, 
+      sudoku: generate()
+    }),
     {
       updateIsEnd: ({ isEnd }) => (status) => {
         return { isEnd: status }
@@ -87,7 +91,12 @@ export default compose(
       },
       updateShowSol: ({ showSol }) => () => { 
         return { showSol: !showSol }
-      }
+      },
+      reset: () => () => ({ 
+        isEnd: false, 
+        time: 0, 
+        sudoku: generate()
+      })
     }
   ),
   lifecycle({

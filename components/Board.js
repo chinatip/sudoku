@@ -118,6 +118,18 @@ class Board extends React.Component {
     this.state = this.initState(sudoku)
   }
 
+  componentWillUpdate (nextProps, nextState) {
+    if (!_.isEqual(nextProps.sudoku, this.props.sudoku)) {
+      const { status, done, current, solution, fSudoku } = this.initState(nextProps.sudoku)
+
+      nextState.status = status
+      nextState.done = done
+      nextState.current = current
+      nextState.solution = solution
+      nextState.fSudoku = fSudoku
+    }
+  }
+  
   initState = (sudoku) => {
     const status = []
     const solution = formatSudoku(sudoku)
@@ -171,7 +183,6 @@ class Board extends React.Component {
   }
 
   renderBoard = (sol = false) => {
-    const { sudoku } = this.props
     const { solution, fSudoku, status, current } = this.state
 
     return _.map(fSudoku, (row, i) => {
@@ -180,7 +191,6 @@ class Board extends React.Component {
           const r = parseInt(i)
           const c = parseInt(j)
           const { isSameRolCol, isSameNum } = this.checkCell(r, c)
-
           return (
             <CellWrapper 
               key={j}
@@ -203,9 +213,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const { sudoku, showSol } = this.props
-    const { done } = this.state
-
+    const { showSol } = this.props
+    
     return (
       <BoardContainer>
         { showSol && 
